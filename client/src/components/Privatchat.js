@@ -6,33 +6,38 @@ function Privatchat(props){
     let[message,setMessage]=useState("");
     let[PrivatMessages,setPrivatMessages]=useState([]);
     
+    // Usermail1 is always the logged-in user, Usermail2 the partner
     let sendPrivatMessage=()=>{
-        socket.emit("sendPrivatMessage",message,RoomData.Room,RoomData.Usermail2);
+        if(message.trim()==="") return;
+        socket.emit("sendPrivatMessage",message,RoomData.Room,RoomData.Usermail1);
         setMessage("");
     }
 
     useEffect(()=>{
-        socket.on("receive_Privat_message",(data)=>{
-            setPrivatMessages((prev)=>([...prev,data]));
-        })
-    },[])
+        const onPrivatMessage=(data)=>{
+            if(data.Room===RoomData.Room){
+                setPrivatMessages((prev)=>([...prev,data]));
+            }
+        }
+        socket.on("receive_Privat_message",onPrivatMessage);
+        return ()=>{
+            socket.off("receive_Privat_message",onPrivatMessage);
+        }
+    },[RoomData.Room])
 
     return(
         <div className="privat_chat"> 
             <h3>{RoomData.Usermail2}</h3>
             <div className="messages">
-                {PrivatMessages.map((data,Pidx)=>{
-                    console.log(data.Usermail)
-                     return(RoomData.Room===data.Room && (
-                        <div key={Pidx} className={
-                            data.Usermail === "server"
-                            ? "message_server"
-                            : data.Usermail === RoomData.Usermail2
-                            ? "message_1"
-                            : "message_2"
-                        } >{data.message}</div>)
-                    )
-                })}
+                {PrivatMessages.map((data,Pidx)=>(
+                    <div key={Pidx} className={
+                        data.Usermail === "server"
+                        ? "message_server"
+                        : data.Usermail === RoomData.Usermail2
+                        ? "message_1"
+                        : "message_2"
+                    } >{data.message}</div>
+                ))}
             </div>
             <div className="privat_input">
                 <input

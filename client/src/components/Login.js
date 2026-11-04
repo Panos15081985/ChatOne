@@ -1,5 +1,6 @@
 import {useState} from "react";
 import { useNavigate } from "react-router-dom";
+import { SERVER_URL } from "../config";
 
 function Login(){
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Login(){
     })
     
     let login=()=>{
-        fetch("http://localhost:3001/login",{
+        fetch(`${SERVER_URL}/login`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,10 +33,16 @@ function Login(){
             else if(data.success==="2"){
                 setMsg( "Wrong Email or Password");
             }
-            else{
+            else if(data.success==="3"){
                 setMsg("User has already used the chat.");
             }
-            
+            else{
+                setMsg("Something went wrong, please try again.");
+            }
+        })
+        .catch((error)=>{
+            console.error("Error during login:", error);
+            setMsg("Server is not reachable.");
         })
     }
 
@@ -44,7 +51,7 @@ function Login(){
             setMsg("Wrong Email or Password")
         }
         else{
-            fetch("http://localhost:3001/register",{
+            fetch(`${SERVER_URL}/register`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,11 +62,12 @@ function Login(){
                 return response.json();
             })
             .then((data)=>{
-                setMsg(data.message)
+                setMsg(data.message || "Something went wrong, please try again.")
                 data.message==="Registration successful" && setRegister(false)
             })
             .catch((error) => {
                 console.error("Error during registration:", error);
+                setMsg("Server is not reachable.");
             });
         }
     

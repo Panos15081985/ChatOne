@@ -1,6 +1,5 @@
 body{
-    /*background: linear-gradient(to left , #ceffe5, #cefeff);*/
-    background-image: url("../public/img/sprach.png");
+    background: linear-gradient(to left , #ceffe5, #cefeff);
 }
 .login{
     background-color:  rgb(237, 247, 248);

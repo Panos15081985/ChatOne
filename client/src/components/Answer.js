@@ -26,7 +26,7 @@ function Answer(props){
     return(
        <div className="privat_answer">
             <p>Do you want to talk to {AnswerUser.Usermail2} ?</p>
-            <button style={{marginRight: "20px"}} onClick={Join}>jes</button>
+            <button style={{marginRight: "20px"}} onClick={Join}>Yes</button>
             <button onClick={Notjoin}>No</button>
         </div>
     )
